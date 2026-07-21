@@ -1,0 +1,8 @@
+name: Deploy AWS Serverless Application
+
+on:
+   push:
+      branches:
+         - main
+
+# TODO: Add a workflow_dispatch event to allow manual triggering of the workflow.
