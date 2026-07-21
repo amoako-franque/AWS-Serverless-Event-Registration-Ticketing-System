@@ -1,0 +1,8 @@
+backend/build/
+build/
+__pycache__/
+.pytest_cache/
+.env
+.aws/
+*.pem
+*credentials*
