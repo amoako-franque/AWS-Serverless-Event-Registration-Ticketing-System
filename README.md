@@ -1,5 +1,5 @@
 # AWS Serverless Event Registration & Ticketing System
-Project Overview
+## Project Overview
 
 The Event Registration & Ticketing System is a serverless application designed to replace a manual event registration process that relied on Microsoft Forms and Excel spreadsheets. The solution leverages AWS managed services to provide a scalable, secure, and cost-effective REST API for managing events and attendee registrations.
 
@@ -17,6 +17,14 @@ No way to enforce spend limits or track cost against a free-tier budget
 This project replaces that manual workflow with a serverless REST API that scales automatically, confirms registrations by email, tracks its own cost, and deploys through a CI/CD pipeline.
 
 ## Architecture overview 
+![Event Ticketing Architecture](docs/images/ticketing.png)
+
+A developer pushes code to GitHub, triggering GitHub Actions to build, test, and deploy to AWS.
+
+A client request hits API Gateway, which invokes Lambda to validate input and write to DynamoDB (`Events`, `Registrations`). On success, Lambda publishes to SNS, sending the attendee a confirmation email.
+
+CloudWatch collects logs/metrics from API Gateway and Lambda; alarms trigger a separate SNS alert to admins on errors or throttling. AWS Budgets tracks spend independently and alerts as free-tier limits approach. IAM roles enforce least-privilege access across every service.
+
 
 | Service | Role |
 |---|---|
@@ -29,6 +37,15 @@ This project replaces that manual workflow with a serverless REST API that scale
 | **GitHub Actions** | Runs tests and deploys infrastructure/code on every push to `main` |
 | **IAM** | Least-privilege roles scoped per Lambda function and service boundary |
 
+## Frontend Stack
+The client is a single-page app built with **React** and **Vite**, giving the operations team and attendees a browser-based interface to replace the old Microsoft Forms workflow.
+ 
+- **React** – component-based UI for browsing events, viewing details, and submitting registrations
+- **Vite** – fast dev server and build tooling for the frontend
+- Communicates with the backend entirely through the **API Gateway** REST endpoints (`/events`, `/events/{eventId}/register`, etc.)
+- Deployed as a static site on **S3**, keeping the whole stack within the AWS free tier
+
+
 
 ## Features
  
@@ -37,7 +54,7 @@ This project replaces that manual workflow with a serverless REST API that scale
 - Centralized logging and alarms for API/Lambda errors
 - Budget alerts before any charges are incurred
 - One-command deployment via GitHub Actions
-- Infrastructure defined as code (Terraform / AWS SAM — see `/infra`)
+- Infrastructure defined as code (Terraform / AWS SAM )
 
 ## Project structure 
 
@@ -64,3 +81,51 @@ This project replaces that manual workflow with a serverless REST API that scale
 - AWS CLI configured locally
 - Node.js (or your chosen Lambda runtime)
 - Terraform or AWS SAM CLI
+
+### Deploy
+```bash
+git clone https://github.com/amoako-franque/AWS-Serverless-Event-Registration-Ticketing-System.git
+cd AWS-Serverless-Event-Registration-Ticketing-System
+ 
+# install dependencies
+npm install
+ 
+# deploy infrastructure
+cd infra
+terraform init
+terraform apply
+```
+
+## CI/CD pipeline
+ 
+Every push to `main` triggers a GitHub Actions workflow that:
+ 
+1. Installs dependencies and runs unit tests
+2. Lints and validates the IaC templates
+3. Deploys the Lambda functions, API Gateway, and DynamoDB tables to AWS
+4. Runs a smoke test against the deployed API
+
+
+## Cost tracking
+ 
+This project is designed to run entirely within the AWS free tier:
+ 
+- DynamoDB on-demand billing avoids idle capacity charges
+- Lambda and API Gateway free-tier limits comfortably cover low/moderate registration volume
+- AWS Budgets is configured to alert at 50%, 80%, and 100% of a defined monthly threshold
+- Budget alerts are sent through SNS to the project owner's email
+
+**Team Hypervisor** 
+ 
+**Members:**
+- Richard Vidzrakou
+- Freda Kemphrey
+- Hassanatu Ahmed
+- Humaidu Ali Mohammed
+- Frank Amoah Boafo
+- Joel Addition
+**Mentor:** William Mukoyani
+
+## License
+ 
+MIT
