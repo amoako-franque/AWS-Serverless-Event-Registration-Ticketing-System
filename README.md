@@ -81,6 +81,8 @@ The client is a single-page app built with **React** and **Vite**, giving the op
 - AWS CLI configured locally
 - Node.js (or your chosen Lambda runtime)
 - Terraform 
+- An AWS OIDC identity provider configured for GitHub Actions (for CI/CD deploys)
+- Python
 
 ### Clone Repo
 ```bash
