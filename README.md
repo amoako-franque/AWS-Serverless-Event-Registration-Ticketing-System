@@ -17,7 +17,7 @@ No way to enforce spend limits or track cost against a free-tier budget
 This project replaces that manual workflow with a serverless REST API that scales automatically, confirms registrations by email, tracks its own cost, and deploys through a CI/CD pipeline.
 
 ## Architecture overview 
-![Event Ticketing Architecture](docs/images/ticketing.png)
+![Event Ticketing Architecture](docs/images/ticketing.drawio.png)
 
 A developer pushes code to GitHub, triggering GitHub Actions to build, test, and deploy to AWS.
 
@@ -80,20 +80,40 @@ The client is a single-page app built with **React** and **Vite**, giving the op
 - AWS account (free tier)
 - AWS CLI configured locally
 - Node.js (or your chosen Lambda runtime)
-- Terraform or AWS SAM CLI
+- Terraform 
 
-### Deploy
+### Clone Repo
 ```bash
 git clone https://github.com/amoako-franque/AWS-Serverless-Event-Registration-Ticketing-System.git
 cd AWS-Serverless-Event-Registration-Ticketing-System
  
+```
+
+ 
+### Backend setup
+ 
+```bash
 # install dependencies
 npm install
  
-# deploy infrastructure
+# run unit tests
+npm test
+```
+ 
+### Deploy infrastructure
+ 
+```bash
 cd infra
 terraform init
 terraform apply
+```
+ 
+### Frontend setup
+ 
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## CI/CD pipeline
@@ -115,7 +135,9 @@ This project is designed to run entirely within the AWS free tier:
 - AWS Budgets is configured to alert at 50%, 80%, and 100% of a defined monthly threshold
 - Budget alerts are sent through SNS to the project owner's email
 
-**Team Hypervisor** 
+## Team
+ 
+**Group name:** Hypervisor
  
 **Members:**
 - Richard Vidzrakou
@@ -124,6 +146,7 @@ This project is designed to run entirely within the AWS free tier:
 - Humaidu Ali Mohammed
 - Frank Amoah Boafo
 - Joel Addition
+
 **Mentor:** William Mukoyani
 
 ## License
