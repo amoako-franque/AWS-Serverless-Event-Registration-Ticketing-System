@@ -41,8 +41,8 @@ jobs:
         env:
           TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
 
-      - name: Terraform apply
-        run: terraform -chdir=terraform apply -auto-approve tfplan
+      # - name: Terraform apply
+      #   run: terraform -chdir=terraform apply -auto-approve tfplan
 
       - name: Smoke test API
         run: |
