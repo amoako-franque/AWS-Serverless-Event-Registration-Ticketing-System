@@ -7,6 +7,8 @@ on:
       - "backend/**"
       - "terraform/backend/**"
       - ".github/workflows/backend-deploy.yml"
+  
+  workflow_dispatch: {}
 
 permissions:
   id-token: write   # required for OIDC auth to AWS
