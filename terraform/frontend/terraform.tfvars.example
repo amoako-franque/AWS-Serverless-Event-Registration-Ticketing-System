@@ -1,0 +1,9 @@
+# AWS Region
+aws_region = "us-east-1"
+
+# S3 Bucket name (must be globally unique)
+bucket_name = "tech-event-frontend-unique-name"
+
+# Index and error documents
+index_document = "index.html"
+error_document = "error.html"
