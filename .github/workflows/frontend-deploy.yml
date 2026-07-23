@@ -4,6 +4,10 @@ on:
    push:
       branches:
          - main
+      paths:
+      - "frontend/**"
+      - "terraform/frontend/**"
+      - ".github/workflows/frontend-deploy.yml"
 
 jobs:
    deploy:
