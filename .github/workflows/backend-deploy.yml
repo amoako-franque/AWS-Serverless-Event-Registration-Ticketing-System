@@ -34,23 +34,23 @@ jobs:
           terraform_version: "1.9.8"
 
       - name: Terraform init
-        run: terraform -chdir=terraform init
+        run: terraform -chdir=terraform/backend init
 
       - name: Terraform plan
-        run: terraform -chdir=terraform plan -out=tfplan
+        run: terraform -chdir=terraform/backend plan -out=tfplan
         env:
           TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
 
       # - name: Terraform apply
-      #   run: terraform -chdir=terraform apply -auto-approve tfplan
+      #   run: terraform -chdir=terraform/backend apply -auto-approve tfplan
 
       - name: Smoke test API
         run: |
-          API_URL=$(terraform -chdir=terraform output -raw api_url)
+          API_URL=$(terraform -chdir=terraform/backend output -raw api_url)
           curl -f "${API_URL}/events" || exit 1
 
       - name: Print API URL for frontend team
         run: |
-          terraform -chdir=terraform output -raw api_url
+          terraform -chdir=terraform/backend output -raw api_url
           echo ""
           echo "BACKEND API URL"

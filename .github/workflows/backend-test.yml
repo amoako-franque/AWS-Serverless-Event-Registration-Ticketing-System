@@ -40,9 +40,9 @@ jobs:
           terraform_version: "1.9.8"
 
       - name: Terraform format check
-        run: terraform -chdir=terraform fmt -check -recursive
+        run: terraform -chdir=terraform/backend fmt -check -recursive
 
       - name: Terraform validate
         run: |
-          terraform -chdir=terraform init -backend=false
-          terraform -chdir=terraform validate
+          terraform -chdir=terraform/backend init -backend=false
+          terraform -chdir=terraform/backend validate
