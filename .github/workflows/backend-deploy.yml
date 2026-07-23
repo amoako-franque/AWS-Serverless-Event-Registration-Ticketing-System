@@ -1,0 +1,56 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "terraform/backend/**"
+      - ".github/workflows/backend-deploy.yml"
+
+permissions:
+  id-token: write   # required for OIDC auth to AWS
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Package Lambda functions
+        run: ./backend/scripts/package_lambdas.sh
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Terraform init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform plan
+        run: terraform -chdir=terraform plan -out=tfplan
+        env:
+          TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL }}
+
+      - name: Terraform apply
+        run: terraform -chdir=terraform apply -auto-approve tfplan
+
+      - name: Smoke test API
+        run: |
+          API_URL=$(terraform -chdir=terraform output -raw api_url)
+          curl -f "${API_URL}/events" || exit 1
+
+      - name: Print API URL for frontend team
+        run: |
+          terraform -chdir=terraform output -raw api_url
+          echo ""
+          echo "BACKEND API URL"
