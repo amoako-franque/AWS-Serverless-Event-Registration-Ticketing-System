@@ -1,0 +1,48 @@
+name: Backend Test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "terraform/backend/**"
+      - ".github/workflows/backend-test.yml"
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "terraform/backend/**"
+      - ".github/workflows/backend-test.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt -r backend/requirements-dev.txt
+
+      - name: Lint
+        run: flake8 backend/lambda/ --max-line-length=110
+
+      - name: Unit tests
+        run: pytest backend/tests/ -v
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+
+      - name: Terraform format check
+        run: terraform -chdir=terraform/backend fmt -check -recursive
+
+      - name: Terraform validate
+        run: |
+          terraform -chdir=terraform/backend init -backend=false
+          terraform -chdir=terraform/backend validate

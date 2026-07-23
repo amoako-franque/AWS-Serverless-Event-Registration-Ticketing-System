@@ -13,13 +13,13 @@ resource "aws_cloudwatch_metric_alarm" "lambda_error_rate" {
   for_each = toset(var.lambda_function_names)
 
   alarm_name          = "${each.value}-error-rate-high"
-  comparison_operator  = "GreaterThanThreshold"
-  evaluation_periods   = 1
-  threshold            = 5
-  alarm_description    = "Error rate exceeded 5% for ${each.value} over 5 minutes"
-  treat_missing_data   = "notBreaching"
-  alarm_actions        = [aws_sns_topic.alerts.arn]
-  ok_actions            = [aws_sns_topic.alerts.arn]
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  threshold           = 5
+  alarm_description   = "Error rate exceeded 5% for ${each.value} over 5 minutes"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.alerts.arn]
+  ok_actions          = [aws_sns_topic.alerts.arn]
 
   metric_query {
     id          = "error_rate"

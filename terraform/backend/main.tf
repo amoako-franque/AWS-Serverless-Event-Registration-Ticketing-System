@@ -72,7 +72,7 @@ module "lambda_get_registrations" {
 
   iam_policy_statements = [
     {
-      actions   = ["dynamodb:Query"]
+      actions = ["dynamodb:Query"]
       resources = [
         module.dynamodb.registrations_table_arn,
         "${module.dynamodb.registrations_table_arn}/index/emailIndex",
