@@ -34,6 +34,13 @@ variable "cancel_registration_lambda_function_name" {
   type = string
 }
 
+variable "create_event_lambda_invoke_arn" {
+  type = string
+}
+variable "create_event_lambda_function_name" {
+  type = string
+}
+
 variable "cors_allow_origin" {
   type    = string
   default = "*"

@@ -12,21 +12,59 @@ import boto3
 
 DEMO_EVENTS = [
     {
-        "eventId": "evt-aws-workshop-2026",
+        "eventId": "aws-workshop-accra-2026",
         "eventName": "AWS Workshop Accra 2026",
         "eventDate": "2026-05-15",
         "location": "Accra, Ghana",
         "capacity": 50,
         "availableSlots": 50,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?aws,cloud",
     },
     {
-        "eventId": "evt-cloud-summit-2026",
+        "eventId": "cloud-solutions-summit",
         "eventName": "Cloud Solutions Summit",
         "eventDate": "2026-06-28",
         "location": "Accra, Ghana",
         "capacity": 30,
         "availableSlots": 4,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?cloud,technology",
     },
+    {
+        "eventId": "devops-days-ghana",
+        "eventName": "DevOps Days Ghana",
+        "eventDate": "2026-07-10",
+        "location": "Kumasi, Ghana",
+        "capacity": 120,
+        "availableSlots": 75,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?devops,server",
+    },
+    {
+        "eventId": "ai-innovation-summit",
+        "eventName": "AI Innovation Summit",
+        "eventDate": "2026-07-25",
+        "location": "Accra, Ghana",
+        "capacity": 200,
+        "availableSlots": 180,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?artificial-intelligence",
+    },
+    {
+        "eventId": "cybersecurity-conference",
+        "eventName": "Cybersecurity Conference",
+        "eventDate": "2026-08-08",
+        "location": "Takoradi, Ghana",
+        "capacity": 80,
+        "availableSlots": 24,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?cybersecurity,hacker",
+    },
+    {
+        "eventId": "python-developers-meetup",
+        "eventName": "Python Developers Meetup",
+        "eventDate": "2026-08-20",
+        "location": "Cape Coast, Ghana",
+        "capacity": 60,
+        "availableSlots": 18,
+        "imageUrl": "https://source.unsplash.com/featured/800x600/?python,programming",
+    }
 ]
 
 
