@@ -10,7 +10,7 @@ BUILD_DIR="$ROOT_DIR/build"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR"
 
-FUNCTIONS=(register list_events get_registrations cancel_registration)
+FUNCTIONS=(register list_events get_registrations cancel_registration create_event)
 
 for fn in "${FUNCTIONS[@]}"; do
   echo "Packaging $fn..."

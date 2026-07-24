@@ -1,5 +1,16 @@
 # Using API Gateway v2 (HTTP API) - cheaper and simpler than REST API (v1)
 # for a straightforward Lambda-proxy setup like this one.
+#
+# Every route below follows the same 3-resource pattern:
+#   1. aws_apigatewayv2_integration - tells API Gateway which Lambda to
+#      call and how to format the request (AWS_PROXY passes the raw
+#      HTTP request through, letting the Lambda handle parsing itself)
+#   2. aws_apigatewayv2_route       - maps an HTTP method + path to that
+#      integration (e.g. "POST /register")
+#   3. aws_lambda_permission        - grants API Gateway permission to
+#      actually invoke that specific Lambda function; without this,
+#      the route exists but every call returns a 500 Internal Server
+#      Error since Lambda rejects the invocation
 
 resource "aws_apigatewayv2_api" "this" {
   name          = "${var.project}-api-${var.environment}"
@@ -25,13 +36,13 @@ resource "aws_apigatewayv2_stage" "this" {
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
     format = jsonencode({
-      requestId               = "$context.requestId"
-      ip                      = "$context.identity.sourceIp"
-      requestTime             = "$context.requestTime"
-      httpMethod              = "$context.httpMethod"
-      routeKey                = "$context.routeKey"
-      status                  = "$context.status"
-      responseLength          = "$context.responseLength"
+      requestId      = "$context.requestId"
+      ip             = "$context.identity.sourceIp"
+      requestTime    = "$context.requestTime"
+      httpMethod     = "$context.httpMethod"
+      routeKey       = "$context.routeKey"
+      status         = "$context.status"
+      responseLength = "$context.responseLength"
       integrationErrorMessage = "$context.integrationErrorMessage"
     })
   }
@@ -126,6 +137,32 @@ resource "aws_lambda_permission" "cancel_registration" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = var.cancel_registration_lambda_function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
+}
+
+# ---- POST /events ----
+# Note: this shares the /events PATH with "GET /events" above, but HTTP
+# API routes key on method+path together, so "GET /events" and
+# "POST /events" are entirely separate routes pointing at different
+# Lambdas - no conflict.
+resource "aws_apigatewayv2_integration" "create_event" {
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = var.create_event_lambda_invoke_arn
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "create_event" {
+  api_id    = aws_apigatewayv2_api.this.id
+  route_key = "POST /events"
+  target    = "integrations/${aws_apigatewayv2_integration.create_event.id}"
+}
+
+resource "aws_lambda_permission" "create_event" {
+  statement_id  = "AllowAPIGatewayInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = var.create_event_lambda_function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/*/*"
 }
