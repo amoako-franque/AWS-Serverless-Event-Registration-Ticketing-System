@@ -56,9 +56,38 @@ The client is a single-page app built with **React** and **Vite**, giving the op
 - One-command deployment via GitHub Actions
 - Infrastructure defined as code (Terraform / AWS SAM )
 
-## Project structure 
+## Project structure
+
+```text
+AWS-Serverless-Event-Registration-Ticketing-System/
+├── backend/
+│   ├── lambda/
+│   │   ├── cancel_registration/
+│   │   ├── get_registrations/
+│   │   ├── list_events/
+│   │   ├── register/
+│   │   └── shared/
+│   ├── scripts/
+│   ├── tests/
+│   ├── API.md
+│   ├── BACKEND_DOC.md
+│   ├── requirements.txt
+│   └── requirements-dev.txt
+├── docs/
+│   └── images/
+├── frontend/
+│   └── FRONEND_DOC.md
+├── terraform/
+│   ├── backend/
+│   │   └── modules/
+│   └── frontend/
+└── README.md
+```
+
+
 
 ```
+
 
 
 ```

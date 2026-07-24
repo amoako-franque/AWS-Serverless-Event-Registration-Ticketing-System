@@ -20,7 +20,7 @@ There are three main parts to the architecture:
 
 ## 2. Architecture diagram
 
-![Event Ticketing Architecture](docs/images/ticketing.drawio.png)
+![Event Ticketing Architecture](images/ticketing.drawio.png)
 
 ## 3. Component breakdown
 
