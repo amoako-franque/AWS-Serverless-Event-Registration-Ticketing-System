@@ -100,3 +100,4 @@ def handler(event, context):
     except Exception as e:
         print(f"Unhandled error in create_event handler: {e}")
         return response(500, {"error": "Internal server error"})
+    
