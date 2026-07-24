@@ -103,4 +103,3 @@ def handler(event, context):
     except Exception as e:
         print(f"Unhandled error in cancel_registration handler: {e}")
         return response(500, {"error": "Internal server error"})
-    
