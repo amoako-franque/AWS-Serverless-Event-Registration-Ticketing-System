@@ -1,6 +1,4 @@
 # AWS Serverless Event Registration & Ticketing System
-
-Project Overview
 ## Project Overview
 
 The Event Registration & Ticketing System is a serverless application designed to replace a manual event registration process that relied on Microsoft Forms and Excel spreadsheets. The solution leverages AWS managed services to provide a scalable, secure, and cost-effective REST API for managing events and attendee registrations.
@@ -19,6 +17,14 @@ No way to enforce spend limits or track cost against a free-tier budget
 This project replaces that manual workflow with a serverless REST API that scales automatically, confirms registrations by email, tracks its own cost, and deploys through a CI/CD pipeline.
 
 ## Architecture overview 
+![Event Ticketing Architecture](docs/images/ticketing.drawio.png)
+
+A developer pushes code to GitHub, triggering GitHub Actions to build, test, and deploy to AWS.
+
+A client request hits API Gateway, which invokes Lambda to validate input and write to DynamoDB (`Events`, `Registrations`). On success, Lambda publishes to SNS, sending the attendee a confirmation email.
+
+CloudWatch collects logs/metrics from API Gateway and Lambda; alarms trigger a separate SNS alert to admins on errors or throttling. AWS Budgets tracks spend independently and alerts as free-tier limits approach. IAM roles enforce least-privilege access across every service.
+
 
 | Service | Role |
 |---|---|
@@ -31,9 +37,18 @@ This project replaces that manual workflow with a serverless REST API that scale
 | **GitHub Actions** | Runs tests and deploys infrastructure/code on every push to `main` |
 | **IAM** | Least-privilege roles scoped per Lambda function and service boundary |
 
+## Frontend Stack
+The client is a single-page app built with **React** and **Vite**, giving the operations team and attendees a browser-based interface to replace the old Microsoft Forms workflow.
+ 
+- **React** – component-based UI for browsing events, viewing details, and submitting registrations
+- **Vite** – fast dev server and build tooling for the frontend
+- Communicates with the backend entirely through the **API Gateway** REST endpoints (`/events`, `/events/{eventId}/register`, etc.)
+- Deployed as a static site on **S3**, keeping the whole stack within the AWS free tier
+
+
 
 ## Features
-
+ 
 - REST API for creating events and registering attendees
 - Automatic email confirmation on successful registration
 - Centralized logging and alarms for API/Lambda errors
@@ -41,86 +56,101 @@ This project replaces that manual workflow with a serverless REST API that scale
 - One-command deployment via GitHub Actions
 - Infrastructure defined as code (Terraform / AWS SAM )
 
-## Project structure
+## Project structure 
 
-```text
-AWS-Serverless-Event-Registration-Ticketing-System/
-├── backend/
-│   └── BACKEND_DOC.md          # Backend documentation
-├── frontend/
-│   └── FRONTEND_DOC.md         # Frontend documentation
-├── terraform/                  # Infrastructure as Code (Terraform or AWS SAM)
-│   ├── backend/
-│   │   └── .gitkeep
-│   └── frontend/
-│       └── .gitkeep
-└── README.md                   # Project overview and setup guide
 ```
 
+
+```
+
+
 ## API endpoints
-
-| Method | Path                              | Description                     |
-| ------ | --------------------------------- | ------------------------------- |
-| `POST` | `/events`                         | Create a new event              |
-| `GET`  | `/events/{eventId}`               | Get event details               |
-| `POST` | `/events/{eventId}/register`      | Register an attendee            |
-| `GET`  | `/events/{eventId}/registrations` | List registrations for an event |
-
+ 
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/events` | Create a new event |
+| `GET` | `/events/{eventId}` | Get event details |
+| `POST` | `/events/{eventId}/register` | Register an attendee |
+| `GET` | `/events/{eventId}/registrations` | List registrations for an event |
+ 
 ## Getting started
-
-## Git Workflow
-
-This project follows a Git Flow branching strategy.
-
-### Branches
-
-- **main** – Production-ready code. Protected from direct pushes.
-- **develop** – Integration branch for ongoing development.
-- **feature/<feature-name>** – New features.
-- **bugfix/<bug-name>** – Bug fixes.
-- **hotfix/<issue-name>** – Critical production fixes.
-
-### Development Process
-
-1. Create a feature branch from `develop`:
-
-   ```bash
-   git checkout develop
-   git pull origin develop
-   git checkout -b feature/your-feature-name
-   ```
-
-2. Commit your changes:
-
-   ```bash
-   git add .
-   git commit -m "Add feature"
-   ```
-
-3. Push the branch:
-
-   ```bash
-   git push -u origin feature/your-feature-name
-   ```
-
-4. Open a Pull Request into `develop`.
-
-5. After code review and approval, merge the Pull Request.
-
-6. When a release is ready, merge `develop` into `main`.
-
-### Branch Protection
-
-The `main` branch is protected and requires:
-
-- Pull requests before merging
-- At least one approval
-- No direct pushes
-- No force pushes
-
+ 
 ### Prerequisites
-
+ 
 - AWS account (free tier)
 - AWS CLI configured locally
 - Node.js (or your chosen Lambda runtime)
-- Terraform or AWS SAM CLI
+- Terraform 
+- An AWS OIDC identity provider configured for GitHub Actions (for CI/CD deploys)
+- Python
+
+### Clone Repo
+```bash
+git clone https://github.com/amoako-franque/AWS-Serverless-Event-Registration-Ticketing-System.git
+cd AWS-Serverless-Event-Registration-Ticketing-System
+ 
+```
+
+ 
+### Backend setup
+ 
+```bash
+# install dependencies
+npm install
+ 
+# run unit tests
+npm test
+```
+ 
+### Deploy infrastructure
+ 
+```bash
+cd infra
+terraform init
+terraform apply
+```
+ 
+### Frontend setup
+ 
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## CI/CD pipeline
+ 
+Every push to `main` triggers a GitHub Actions workflow that:
+ 
+1. Installs dependencies and runs unit tests
+2. Lints and validates the IaC templates
+3. Deploys the Lambda functions, API Gateway, and DynamoDB tables to AWS
+4. Runs a smoke test against the deployed API
+
+
+## Cost tracking
+ 
+This project is designed to run entirely within the AWS free tier:
+ 
+- DynamoDB on-demand billing avoids idle capacity charges
+- Lambda and API Gateway free-tier limits comfortably cover low/moderate registration volume
+- AWS Budgets is configured to alert at 50%, 80%, and 100% of a defined monthly threshold
+- Budget alerts are sent through SNS to the project owner's email
+
+## Team
+ 
+**Group name:** Hypervisor
+ 
+**Members:**
+- Richard Vidzrakou
+- Freda Kemphrey
+- Hassanatu Ahmed
+- Humaidu Ali Mohammed
+- Frank Amoah Boafo
+- Joel Addition
+
+**Mentor:** William Mukoyani
+
+## License
+ 
+MIT
