@@ -17,7 +17,7 @@ No way to enforce spend limits or track cost against a free-tier budget
 This project replaces that manual workflow with a serverless REST API that scales automatically, confirms registrations by email, tracks its own cost, and deploys through a CI/CD pipeline.
 
 ## Architecture overview 
-![Event Ticketing Architecture](docs/images/ticketing.drawio.png)
+![Event Ticketing Architecture](docs/images/architecture.png)
 
 A developer pushes code to GitHub, triggering GitHub Actions to build, test, and deploy to AWS.
 
